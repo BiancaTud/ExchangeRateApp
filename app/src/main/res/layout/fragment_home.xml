@@ -41,7 +41,10 @@
         android:layout_width = "0dp"
         android:layout_height = "0dp"
         android:paddingBottom="@dimen/default_padding"
+        android:layout_marginTop="@dimen/default_padding"
+        android:overScrollMode="never"
         tools:listitem="@layout/item_rate_view"
+        app:layout_constraintTop_toBottomOf="@id/lastCheckTv"
         app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
         app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
         app:layout_constraintBottom_toBottomOf="parent"/>

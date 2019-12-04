@@ -3,6 +3,8 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:padding="@dimen/default_padding"
+    android:layout_marginTop="@dimen/default_padding"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -15,8 +17,9 @@
 
         <ImageView
             android:id="@+id/rateIv"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"

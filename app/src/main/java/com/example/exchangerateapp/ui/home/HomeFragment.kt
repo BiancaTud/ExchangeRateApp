@@ -4,15 +4,19 @@ package com.example.exchangerateapp.ui.home
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.exchangerateapp.R
 import com.example.exchangerateapp.ui.BaseFragment
+import kotlinx.android.synthetic.main.fragment_home.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * A simple [Fragment] subclass.
  */
 class HomeFragment : BaseFragment() {
+
 
     private val viewModel: HomeViewModel by viewModel()
 
@@ -49,6 +53,16 @@ class HomeFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
+        refreshExchangeRates()
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        viewModel.stopPooling()
+    }
+
+    private fun refreshExchangeRates() {
         viewModel.getExchangeRatesFor()
     }
 
@@ -58,5 +72,26 @@ class HomeFragment : BaseFragment() {
 
     private fun goToSettings() {
         findNavController().navigate(R.id.action_homeFragment_to_settingsFragment)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        initViews()
+        bindViewModel()
+    }
+
+    private fun initViews() {
+        val layoutManager = LinearLayoutManager(activity)
+        ratesRecyclerView.layoutManager = layoutManager
+        ratesRecyclerView.adapter = RatesAdapter()
+    }
+
+    private fun bindViewModel() {
+        viewModel.ratesList.observe(viewLifecycleOwner, Observer { ratesList ->
+            (ratesRecyclerView.adapter as RatesAdapter).setRatesList(ratesList)
+        })
+        viewModel.timestamp.observe(viewLifecycleOwner, Observer { dateString ->
+            lastCheckTv.text = getString(R.string.last_check) + " " + dateString
+        })
     }
 }
