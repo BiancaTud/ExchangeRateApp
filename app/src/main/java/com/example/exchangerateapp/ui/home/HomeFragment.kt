@@ -9,7 +9,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.exchangerateapp.R
 import com.example.exchangerateapp.ui.BaseFragment
+import com.example.exchangerateapp.ui.MainActivity
+import com.example.exchangerateapp.ui.MainViewModel
 import kotlinx.android.synthetic.main.fragment_home.*
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
@@ -17,8 +20,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
  */
 class HomeFragment : BaseFragment() {
 
-
     private val viewModel: HomeViewModel by viewModel()
+    private val sharedViewModel: MainViewModel by sharedViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,12 +29,6 @@ class HomeFragment : BaseFragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
 
@@ -63,7 +60,7 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun refreshExchangeRates() {
-        viewModel.getExchangeRatesFor()
+        viewModel.getExchangeRatesFor(sharedViewModel.currentCurrency, sharedViewModel.currentRefreshValue)
     }
 
     private fun goToHistory() {
@@ -76,8 +73,17 @@ class HomeFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        initToolbar()
         initViews()
         bindViewModel()
+    }
+
+    private fun initToolbar() {
+        (activity as MainActivity).supportActionBar?.apply {
+            title = getString(R.string.app_name)
+            setDisplayHomeAsUpEnabled(false)
+            setDisplayShowHomeEnabled(false)
+        }
     }
 
     private fun initViews() {
@@ -88,6 +94,7 @@ class HomeFragment : BaseFragment() {
 
     private fun bindViewModel() {
         viewModel.ratesList.observe(viewLifecycleOwner, Observer { ratesList ->
+            sharedViewModel.currenciesList = ratesList.map {rate-> rate.currency  }.toMutableList()
             (ratesRecyclerView.adapter as RatesAdapter).setRatesList(ratesList)
         })
         viewModel.timestamp.observe(viewLifecycleOwner, Observer { dateString ->

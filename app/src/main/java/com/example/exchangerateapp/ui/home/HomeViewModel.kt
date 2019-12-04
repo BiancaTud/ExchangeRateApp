@@ -17,7 +17,6 @@ import io.reactivex.disposables.Disposable
 
 class HomeViewModel(private val repository: RatesRepository) : BaseViewModel() {
 
-    val base = "EUR"
     private val _ratesList = MutableLiveData<List<Rate>>()
     val ratesList: LiveData<List<Rate>>
         get() = _ratesList
@@ -25,21 +24,19 @@ class HomeViewModel(private val repository: RatesRepository) : BaseViewModel() {
     val timestamp: LiveData<String>
         get() = _timestamp
 
-    val delay: Long = 3
-
     private var pollingDisposable: Disposable? = null
 
-    fun getExchangeRatesFor(base: String = HomeViewModel@ this.base) {
-        resumePooling(base)
+    fun getExchangeRatesFor(currentCurrency:String, refreshValue:Long) {
+        resumePooling(currentCurrency, refreshValue)
     }
 
 
-    private fun resumePooling(base: String) {
+    private fun resumePooling(currentCurrency:String, refreshValue:Long) {
         if (pollingDisposable == null) {
             pollingDisposable =
-                repository.getSearchResults(base).subscribeOn(Schedulers.io()).observeOn(
+                repository.getSearchResults(currentCurrency).subscribeOn(Schedulers.io()).observeOn(
                     AndroidSchedulers.mainThread()
-                ).repeatWhen { observable -> observable.delay(delay, TimeUnit.SECONDS) }
+                ).repeatWhen { observable -> observable.delay(refreshValue, TimeUnit.SECONDS) }
                     .subscribe({ response ->
                         _ratesList.postValue(response.rates.map { Rate(it.key, it.value) })
                         _timestamp.postValue(getCurrentTimestamp())

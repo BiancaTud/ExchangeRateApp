@@ -7,4 +7,6 @@
     <string name="settings">Settings</string>
     <string name="home_fragment_title">Currency exchange rates for BNR</string>
     <string name="last_check">Last check: </string>
+    <string name="currency">Currency </string>
+    <string name="refresh_time">Refresh Time </string>
 </resources>
