@@ -7,11 +7,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.exchangerateapp.R
 import com.example.exchangerateapp.ui.BaseFragment
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 /**
  * A simple [Fragment] subclass.
  */
 class HomeFragment : BaseFragment() {
+
+    private val viewModel: HomeViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +45,11 @@ class HomeFragment : BaseFragment() {
             }
         }
         return false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.getExchangeRatesFor()
     }
 
     private fun goToHistory() {
