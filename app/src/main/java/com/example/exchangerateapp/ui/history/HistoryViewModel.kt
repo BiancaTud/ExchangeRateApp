@@ -65,12 +65,13 @@ class HistoryViewModel(private val repository: RatesRepository) : BaseViewModel(
 
     }
 
+
     private fun formatResponseToDataSet(
         response: HistoryRatesResponse,
         currency: String
     ): List<Pair<Date, Double>> {
         return response.rates.map { Pair(it.key, it.value[currency] ?: 1.0) }
-            .sortedWith(Comparator { rate: Pair<Date, Double>, rate2: Pair<Date, Double> ->
+            .sortedWith(Comparator { rate: Pair<Date, Double>, rate2: Pair<Date, Double> -> // sort by date
                 comparatorDates(
                     rate,
                     rate2

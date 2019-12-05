@@ -59,7 +59,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onStop() {
         super.onStop()
-        viewModel.stopPooling()
+        viewModel.stopPolling() // do not refresh rates while screen not visible
     }
 
     private fun refreshExchangeRates() {
@@ -97,7 +97,6 @@ class HomeFragment : BaseFragment() {
         ratesRecyclerView.layoutManager = layoutManager
         ratesRecyclerView.adapter = RatesAdapter()
 
-
         context?.let {
             swipeRefreshLayout.setColorSchemeColors(
                 ContextCompat.getColor(
@@ -107,7 +106,7 @@ class HomeFragment : BaseFragment() {
             )
         }
         swipeRefreshLayout.setOnRefreshListener {
-            viewModel.stopPooling()
+            viewModel.stopPolling()
             refreshExchangeRates()
         }
     }

@@ -2,4 +2,14 @@
 <resources>
     <dimen name="margin_side">18dp</dimen>
     <dimen name="default_padding">8dp</dimen>
+    <dimen name="default_double_padding">16dp</dimen>
+    <dimen name="margin_top_views">24dp</dimen>
+    <dimen name="currency_flag_size">42dp</dimen>
+    <dimen name="chart_width_size">280dp</dimen>
+    <dimen name="chart_height_size">200dp</dimen>
+    <dimen name="chart_margin_top">48dp</dimen>
+
+    <dimen name="currency_text_size">20sp</dimen>
+    <dimen name="default_double_text_size">16sp</dimen>
+    <dimen name="min_text_size">12sp</dimen>
 </resources>

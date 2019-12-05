@@ -35,9 +35,9 @@ class HomeViewModel(private val repository: RatesRepository) : BaseViewModel() {
             pollingDisposable =
                 repository.getExchangeRates(currentCurrency).subscribeOn(Schedulers.io()).observeOn(
                     AndroidSchedulers.mainThread()
-                ).repeatWhen { observable -> observable.delay(refreshValue, TimeUnit.SECONDS) }
+                ).repeatWhen { observable -> observable.delay(refreshValue, TimeUnit.SECONDS) } // refresh rates from server every "refreshValue" seconds
                     .subscribe({ response ->
-                        _ratesList.postValue(response.rates.map { Rate(it.key, it.value) })
+                        _ratesList.postValue(response.rates.map { Rate(it.key, it.value) }) //format response received from server
                         _timestamp.postValue(getCurrentTimestamp())
                         DebugResponseLogger.log("getExchangeRatesFor", response.toString())
                     },
@@ -51,7 +51,7 @@ class HomeViewModel(private val repository: RatesRepository) : BaseViewModel() {
     }
 
 
-    fun stopPooling() {
+    fun stopPolling() {
         pollingDisposable?.let { disposable ->
             disposable.dispose()
             unregisterDisposable(disposable)

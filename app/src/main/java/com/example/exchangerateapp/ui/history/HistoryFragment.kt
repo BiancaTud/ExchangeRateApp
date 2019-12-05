@@ -57,7 +57,7 @@ class HistoryFragment : BaseFragment() {
     }
 
     private fun bindViewModel() {
-        viewModel.getHistoryRatesFor(sharedViewModel.currentCurrency)
+
         viewModel.ronDataSet.observe(viewLifecycleOwner, Observer { ronDataSetList ->
             setUpDataSetForChart(ronChart, ronDataSetList, currencyRON)
         })
@@ -67,13 +67,15 @@ class HistoryFragment : BaseFragment() {
         viewModel.bgnDataSet.observe(viewLifecycleOwner, Observer { bgnDataSetList ->
             setUpDataSetForChart(bgnChart, bgnDataSetList, currencyBGN)
         })
-        viewModel.showErrorConnectionEvent.observe(viewLifecycleOwner, Observer {msg->
+        viewModel.showErrorConnectionEvent.observe(viewLifecycleOwner, Observer { msg ->
             Toast.makeText(
                 activity,
                 msg,
                 Toast.LENGTH_SHORT
             ).show()
         })
+
+        viewModel.getHistoryRatesFor(sharedViewModel.currentCurrency)
     }
 
 
@@ -111,11 +113,15 @@ class HistoryFragment : BaseFragment() {
             axisLeft.isEnabled = false
             xAxis.position = XAxis.XAxisPosition.BOTTOM
             xAxis.valueFormatter = DateAxisValueFormatter()
+            setTouchEnabled(false)
+            setPinchZoom(false)
+            isDoubleTapToZoomEnabled = false
         }
 
     }
 
 
+    //convert dataset to chart's values format
     private fun setUpDataSetForChart(
         lineChart: LineChart,
         dataSetList: List<Pair<Date, Double>>,
@@ -135,7 +141,7 @@ class HistoryFragment : BaseFragment() {
 
 }
 
-
+// formatter used to display date values on chart's axis
 class DateAxisValueFormatter :
     ValueFormatter() {
 

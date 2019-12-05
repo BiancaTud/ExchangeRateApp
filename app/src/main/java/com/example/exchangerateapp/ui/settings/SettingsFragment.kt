@@ -57,14 +57,9 @@ class SettingsFragment : BaseFragment() {
                 MainViewModel.refreshValuesList
             )
 
-            refreshExposedDropdown.setAdapter(adapter)
-            refreshExposedDropdown.setText(sharedViewModel.currentRefreshValue.toString(), false)
-            refreshExposedDropdown.setOnItemClickListener { _, _, position, _ ->
-                if (position < MainViewModel.refreshValuesList.size) {
-                    sharedViewModel.currentRefreshValue = MainViewModel.refreshValuesList[position]
-                }
-            }
+            setRefreshValueSpinner(adapter)
 
+            //the list of rates received from the server misses base currency
             if (!sharedViewModel.currenciesList.contains(sharedViewModel.currentCurrency)) {
                 sharedViewModel.currenciesList.add(sharedViewModel.currentCurrency)
             }
@@ -75,12 +70,26 @@ class SettingsFragment : BaseFragment() {
                 sharedViewModel.currenciesList
             )
 
-            currencyExposedDropdown.setAdapter(adapterCurrencies)
-            currencyExposedDropdown.setText(sharedViewModel.currentCurrency, false)
-            currencyExposedDropdown.setOnItemClickListener { _, _, position, _ ->
-                if (position < sharedViewModel.currenciesList.size) {
-                    sharedViewModel.currentCurrency = sharedViewModel.currenciesList[position]
-                }
+            setCurrencySpinner(adapterCurrencies)
+        }
+    }
+
+    private fun setRefreshValueSpinner(adapter: ArrayAdapter<Long>) {
+        refreshExposedDropdown.setAdapter(adapter)
+        refreshExposedDropdown.setText(sharedViewModel.currentRefreshValue.toString(), false)
+        refreshExposedDropdown.setOnItemClickListener { _, _, position, _ ->
+            if (position < MainViewModel.refreshValuesList.size) {
+                sharedViewModel.currentRefreshValue = MainViewModel.refreshValuesList[position]
+            }
+        }
+    }
+
+    private fun setCurrencySpinner(adapter: ArrayAdapter<String>) {
+        currencyExposedDropdown.setAdapter(adapter)
+        currencyExposedDropdown.setText(sharedViewModel.currentCurrency, false)
+        currencyExposedDropdown.setOnItemClickListener { _, _, position, _ ->
+            if (position < sharedViewModel.currenciesList.size) {
+                sharedViewModel.currentCurrency = sharedViewModel.currenciesList[position]
             }
         }
     }
