@@ -3,10 +3,13 @@ package com.example.exchangerateapp.ui.home
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.exchangerateapp.R
 import com.example.exchangerateapp.ui.BaseFragment
 import com.example.exchangerateapp.ui.MainActivity
@@ -48,19 +51,22 @@ class HomeFragment : BaseFragment() {
         return false
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         refreshExchangeRates()
 
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         viewModel.stopPooling()
     }
 
     private fun refreshExchangeRates() {
-        viewModel.getExchangeRatesFor(sharedViewModel.currentCurrency, sharedViewModel.currentRefreshValue)
+        viewModel.getExchangeRatesFor(
+            sharedViewModel.currentCurrency,
+            sharedViewModel.currentRefreshValue
+        )
     }
 
     private fun goToHistory() {
@@ -90,15 +96,43 @@ class HomeFragment : BaseFragment() {
         val layoutManager = LinearLayoutManager(activity)
         ratesRecyclerView.layoutManager = layoutManager
         ratesRecyclerView.adapter = RatesAdapter()
+
+
+        context?.let {
+            swipeRefreshLayout.setColorSchemeColors(
+                ContextCompat.getColor(
+                    it,
+                    R.color.colorPrimary
+                )
+            )
+        }
+        swipeRefreshLayout.setOnRefreshListener {
+            viewModel.stopPooling()
+            refreshExchangeRates()
+        }
     }
 
     private fun bindViewModel() {
         viewModel.ratesList.observe(viewLifecycleOwner, Observer { ratesList ->
-            sharedViewModel.currenciesList = ratesList.map {rate-> rate.currency  }.toMutableList()
+            progressBar.visibility = View.GONE
+            swipeRefreshLayout.isRefreshing = false
+            swipeRefreshLayout.visibility = View.VISIBLE
+            sharedViewModel.currenciesList = ratesList.map { rate -> rate.currency }.toMutableList()
             (ratesRecyclerView.adapter as RatesAdapter).setRatesList(ratesList)
         })
         viewModel.timestamp.observe(viewLifecycleOwner, Observer { dateString ->
             lastCheckTv.text = getString(R.string.last_check) + " " + dateString
+        })
+        viewModel.showErrorConnectionEvent.observe(viewLifecycleOwner, Observer { msg ->
+            progressBar.visibility = View.GONE
+            Toast.makeText(
+                activity,
+                msg,
+                Toast.LENGTH_SHORT
+            ).show()
+        })
+        viewModel.showProgressEvent.observe(viewLifecycleOwner, Observer {
+            progressBar.visibility = View.VISIBLE
         })
     }
 }

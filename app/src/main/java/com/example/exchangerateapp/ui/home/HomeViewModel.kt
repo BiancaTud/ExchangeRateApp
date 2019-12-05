@@ -25,6 +25,7 @@ class HomeViewModel(private val repository: RatesRepository) : BaseViewModel() {
     private var pollingDisposable: Disposable? = null
 
     fun getExchangeRatesFor(currentCurrency:String, refreshValue:Long) {
+        showProgressEvent.call()
         resumePooling(currentCurrency, refreshValue)
     }
 
@@ -41,7 +42,7 @@ class HomeViewModel(private val repository: RatesRepository) : BaseViewModel() {
                         DebugResponseLogger.log("getExchangeRatesFor", response.toString())
                     },
                         {
-                            showErrorConnectionEvent.call()
+                            showErrorConnectionEvent.postValue(it.localizedMessage)
                             DebugResponseLogger.log("getExchangeRatesFor", it.toString())
                         })
 

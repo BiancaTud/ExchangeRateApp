@@ -5,8 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     android:fillViewport="true"
     android:overScrollMode="never"
+    android:paddingBottom="24dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,12 +34,27 @@
             android:id="@+id/ronIv"
             android:layout_width="42dp"
             android:layout_height="42dp"
-            app:layout_constraintBottom_toBottomOf="@+id/ronChart"
+            android:layout_marginBottom="@dimen/default_padding"
+            app:layout_constraintBottom_toTopOf="@+id/ronCurrencyTv"
             app:layout_constraintEnd_toStartOf="@+id/ronChart"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
             app:layout_constraintTop_toTopOf="@+id/ronChart"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:src="@drawable/flag_ro" />
+
+        <TextView
+            android:id="@+id/ronCurrencyTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-bold"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ronChart"
+            app:layout_constraintEnd_toEndOf="@+id/ronIv"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+            app:layout_constraintTop_toBottomOf="@+id/ronIv"
+            tools:text="RON" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/ronChart"
@@ -51,17 +68,33 @@
             android:id="@+id/usdIv"
             android:layout_width="42dp"
             android:layout_height="42dp"
-            app:layout_constraintBottom_toBottomOf="@+id/usdChart"
+            android:layout_marginBottom="@dimen/default_padding"
+            app:layout_constraintBottom_toTopOf="@+id/usdCurrencyTv"
             app:layout_constraintEnd_toStartOf="@+id/usdChart"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
             app:layout_constraintTop_toTopOf="@+id/usdChart"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:src="@drawable/flag_ro" />
+
+
+        <TextView
+            android:id="@+id/usdCurrencyTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-bold"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/usdChart"
+            app:layout_constraintEnd_toEndOf="@+id/usdIv"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+            app:layout_constraintTop_toBottomOf="@+id/usdIv"
+            tools:text="RON" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/usdChart"
-            android:layout_width="200dp"
-            android:layout_height="142dp"
+            android:layout_width="260dp"
+            android:layout_height="200dp"
             android:layout_marginTop="48dp"
             app:layout_constraintEnd_toEndOf="@id/guidelineRight"
             app:layout_constraintTop_toBottomOf="@+id/ronChart" />
@@ -71,17 +104,33 @@
             android:id="@+id/bgnIv"
             android:layout_width="42dp"
             android:layout_height="42dp"
-            app:layout_constraintBottom_toBottomOf="@+id/bgnChart"
+            android:layout_marginBottom="@dimen/default_padding"
+            app:layout_constraintBottom_toTopOf="@+id/bgnCurrencyTv"
             app:layout_constraintEnd_toStartOf="@+id/bgnChart"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
             app:layout_constraintTop_toTopOf="@+id/bgnChart"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:src="@drawable/flag_ro" />
+
+
+        <TextView
+            android:id="@+id/bgnCurrencyTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-bold"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/bgnChart"
+            app:layout_constraintEnd_toEndOf="@+id/usdIv"
+            app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+            app:layout_constraintTop_toBottomOf="@+id/bgnIv"
+            tools:text="RON" />
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/bgnChart"
-            android:layout_width="200dp"
-            android:layout_height="142dp"
+            android:layout_width="260dp"
+            android:layout_height="200dp"
             android:layout_marginTop="48dp"
             app:layout_constraintEnd_toEndOf="@id/guidelineRight"
             app:layout_constraintTop_toBottomOf="@+id/usdChart" />

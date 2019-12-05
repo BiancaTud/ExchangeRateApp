@@ -49,35 +49,38 @@ class SettingsFragment : BaseFragment() {
 
     private fun setUpFields() {
 
-        val adapter = ArrayAdapter(
-            context,
-            R.layout.item_spinner,
-            MainViewModel.refreshValuesList
-        )
 
-        refreshExposedDropdown.setAdapter(adapter)
-        refreshExposedDropdown.setText(sharedViewModel.currentRefreshValue.toString(), false)
-        refreshExposedDropdown.setOnItemClickListener { _, _, position, _ ->
-            if (position < MainViewModel.refreshValuesList.size) {
-                sharedViewModel.currentRefreshValue = MainViewModel.refreshValuesList[position]
+        context?.let { context ->
+            val adapter = ArrayAdapter(
+                context,
+                R.layout.item_spinner,
+                MainViewModel.refreshValuesList
+            )
+
+            refreshExposedDropdown.setAdapter(adapter)
+            refreshExposedDropdown.setText(sharedViewModel.currentRefreshValue.toString(), false)
+            refreshExposedDropdown.setOnItemClickListener { _, _, position, _ ->
+                if (position < MainViewModel.refreshValuesList.size) {
+                    sharedViewModel.currentRefreshValue = MainViewModel.refreshValuesList[position]
+                }
             }
-        }
 
-        if (!sharedViewModel.currenciesList.contains(sharedViewModel.currentCurrency)) {
-            sharedViewModel.currenciesList.add(sharedViewModel.currentCurrency)
-        }
+            if (!sharedViewModel.currenciesList.contains(sharedViewModel.currentCurrency)) {
+                sharedViewModel.currenciesList.add(sharedViewModel.currentCurrency)
+            }
 
-        val adapterCurrencies = ArrayAdapter(
-            context,
-            R.layout.item_spinner,
-            sharedViewModel.currenciesList
-        )
+            val adapterCurrencies = ArrayAdapter(
+                context,
+                R.layout.item_spinner,
+                sharedViewModel.currenciesList
+            )
 
-        currencyExposedDropdown.setAdapter(adapterCurrencies)
-        currencyExposedDropdown.setText(sharedViewModel.currentCurrency, false)
-        currencyExposedDropdown.setOnItemClickListener { _, _, position, _ ->
-            if (position < sharedViewModel.currenciesList.size) {
-                sharedViewModel.currentCurrency = sharedViewModel.currenciesList[position]
+            currencyExposedDropdown.setAdapter(adapterCurrencies)
+            currencyExposedDropdown.setText(sharedViewModel.currentCurrency, false)
+            currencyExposedDropdown.setOnItemClickListener { _, _, position, _ ->
+                if (position < sharedViewModel.currenciesList.size) {
+                    sharedViewModel.currentCurrency = sharedViewModel.currenciesList[position]
+                }
             }
         }
     }

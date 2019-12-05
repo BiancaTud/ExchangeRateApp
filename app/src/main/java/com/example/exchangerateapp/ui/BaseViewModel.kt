@@ -10,7 +10,7 @@ open class BaseViewModel : ViewModel(), KoinComponent {
     private val compositeDisposable = CompositeDisposable()
 
     var showProgressEvent = SingleLiveEvent<Boolean>()
-    var showErrorConnectionEvent = SingleLiveEvent<Boolean>()
+    var showErrorConnectionEvent = SingleLiveEvent<String>()
 
     fun registerDisposable(disposable: Disposable) {
         compositeDisposable.add(disposable)

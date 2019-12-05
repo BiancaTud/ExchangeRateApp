@@ -3,6 +3,7 @@ package com.example.exchangerateapp.ui.history
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.exchangerateapp.data.RatesRepository
+import com.example.exchangerateapp.data.response.HistoryRatesResponse
 import com.example.exchangerateapp.ui.BaseViewModel
 import com.example.exchangerateapp.util.DebugResponseLogger
 import com.example.exchangerateapp.util.getDateFormatForApi
@@ -21,46 +22,66 @@ class HistoryViewModel(private val repository: RatesRepository) : BaseViewModel(
     }
 
     private val currentTimeMillis = Calendar.getInstance().timeInMillis
-    private var _ronDataset = MutableLiveData<List<Pair<Date, Double>>>()
-    val ronDataset: LiveData<List<Pair<Date, Double>>>
-        get() = _ronDataset
+    private var _ronDataSet = MutableLiveData<List<Pair<Date, Double>>>()
+    val ronDataSet: LiveData<List<Pair<Date, Double>>>
+        get() = _ronDataSet
+    private var _usdDataSet = MutableLiveData<List<Pair<Date, Double>>>()
+    val usdDataSet: LiveData<List<Pair<Date, Double>>>
+        get() = _usdDataSet
+    private var _bgnDataSet = MutableLiveData<List<Pair<Date, Double>>>()
+    val bgnDataSet: LiveData<List<Pair<Date, Double>>>
+        get() = _bgnDataSet
+
 
     fun getHistoryRatesFor(currentCurrency: String) {
+        registerDisposableFor(currentCurrency, currencyRON, _ronDataSet)
+        registerDisposableFor(currentCurrency, currencyUSD, _usdDataSet)
+        registerDisposableFor(currentCurrency, currencyBGN, _bgnDataSet)
+
+    }
+
+    private fun registerDisposableFor(
+        currentCurrency: String,
+        formatCurrency: String,
+        currencyDataSet: MutableLiveData<List<Pair<Date, Double>>>
+    ) {
         registerDisposable(
             repository.getHistoryRates(
                 currentCurrency,
                 getStartDate(days),
                 getDateFormatForApi(currentTimeMillis),
-                currencyRON
+                formatCurrency
             )
                 .subscribeOn(Schedulers.io()).observeOn(
                     AndroidSchedulers.mainThread()
-                ).subscribe({ response ->
-                    val dataset: List<Pair<Date, Double>> =
-                        response.rates.map { Pair(it.key, it.value[currencyRON] ?: 1.0) }
-                            .sortedWith(Comparator { rate: Pair<Date, Double>, rate2: Pair<Date, Double> ->
-                                comparatorLong(
-                                    rate,
-                                    rate2
-                                )
-                            })
+                )
+                .subscribe({ response ->
+                    currencyDataSet.postValue(formatResponseToDataSet(response, formatCurrency))
+                }, {
+                    showErrorConnectionEvent.postValue(it.localizedMessage)
+                    DebugResponseLogger.log("getHistoryRatesFor", it.toString())
+                })
+        )
 
-                    _ronDataset.postValue(dataset)
+    }
 
-                },
-
-                    {
-                        showErrorConnectionEvent.call()
-                        DebugResponseLogger.log("getHistoryRatesFor", it.toString())
-                    }
-
-                ))
+    private fun formatResponseToDataSet(
+        response: HistoryRatesResponse,
+        currency: String
+    ): List<Pair<Date, Double>> {
+        return response.rates.map { Pair(it.key, it.value[currency] ?: 1.0) }
+            .sortedWith(Comparator { rate: Pair<Date, Double>, rate2: Pair<Date, Double> ->
+                comparatorDates(
+                    rate,
+                    rate2
+                )
+            })
     }
 
 
 }
 
-private fun comparatorLong(
+private fun comparatorDates(
     rate: Pair<Date, Double>,
     rate2: Pair<Date, Double>
 ): Int {

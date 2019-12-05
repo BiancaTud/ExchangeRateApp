@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.example.exchangerateapp.R
@@ -15,6 +16,7 @@ import com.example.exchangerateapp.ui.MainViewModel
 import com.example.exchangerateapp.ui.history.HistoryViewModel.Companion.currencyBGN
 import com.example.exchangerateapp.ui.history.HistoryViewModel.Companion.currencyRON
 import com.example.exchangerateapp.ui.history.HistoryViewModel.Companion.currencyUSD
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -56,50 +58,80 @@ class HistoryFragment : BaseFragment() {
 
     private fun bindViewModel() {
         viewModel.getHistoryRatesFor(sharedViewModel.currentCurrency)
-        viewModel.ronDataset.observe(viewLifecycleOwner, Observer { ronDatasetList ->
-            run {
-                setRONChart(ronDatasetList)
-            }
+        viewModel.ronDataSet.observe(viewLifecycleOwner, Observer { ronDataSetList ->
+            setUpDataSetForChart(ronChart, ronDataSetList, currencyRON)
+        })
+        viewModel.usdDataSet.observe(viewLifecycleOwner, Observer { usdDataSetList ->
+            setUpDataSetForChart(usdChart, usdDataSetList, currencyUSD)
+        })
+        viewModel.bgnDataSet.observe(viewLifecycleOwner, Observer { bgnDataSetList ->
+            setUpDataSetForChart(bgnChart, bgnDataSetList, currencyBGN)
+        })
+        viewModel.showErrorConnectionEvent.observe(viewLifecycleOwner, Observer {msg->
+            Toast.makeText(
+                activity,
+                msg,
+                Toast.LENGTH_SHORT
+            ).show()
         })
     }
 
-    private fun setRONChart(ronDatasetList: List<Pair<Date, Double>>) {
-        val entries = ronDatasetList.map {
-            Entry(it.first.time.toFloat(), it.second.toFloat())
-        }
-
-        val dataSet = LineDataSet(entries, "RON")
-        context?.let { dataSet.color = ContextCompat.getColor(it, R.color.colorPrimaryDark) }
-        val lineData = LineData(dataSet)
-        ronChart.data = lineData
-        ronChart.invalidate()
-    }
 
     private fun initViews() {
-        ronChart.legend.isEnabled = false
-        ronChart.description.text = getString(R.string.description_graph)
-        ronChart.axisLeft.setDrawGridLines(false)
-        ronChart.axisRight.setDrawGridLines(false)
 
-        val xAxis = ronChart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.valueFormatter = DateAxisValueFormatter()
-
-        ronChart.axisRight.isEnabled = false
-        ronChart.axisLeft.isEnabled = false
+        initialSetUpChart(ronChart)
+        initialSetUpChart(usdChart)
+        initialSetUpChart(bgnChart)
 
         ronIv.setImageResource(ExtendedCurrency.getCurrencyByISO(currencyRON).flag)
         usdIv.setImageResource(ExtendedCurrency.getCurrencyByISO(currencyUSD).flag)
         bgnIv.setImageResource(ExtendedCurrency.getCurrencyByISO(currencyBGN).flag)
+
+        ronCurrencyTv.text = currencyRON
+        usdCurrencyTv.text = currencyUSD
+        bgnCurrencyTv.text = currencyBGN
     }
 
     private fun initToolbar() {
         (activity as MainActivity).supportActionBar?.apply {
-            title = getString(com.example.exchangerateapp.R.string.history)
+            title = getString(R.string.history) + " for " + sharedViewModel.currentCurrency
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
         }
     }
+
+
+    private fun initialSetUpChart(lineChart: LineChart) {
+        lineChart.apply {
+            legend.isEnabled = false
+            description.text = getString(R.string.description_graph)
+            axisLeft.setDrawGridLines(false)
+            axisRight.setDrawGridLines(false)
+            axisRight.isEnabled = false
+            axisLeft.isEnabled = false
+            xAxis.position = XAxis.XAxisPosition.BOTTOM
+            xAxis.valueFormatter = DateAxisValueFormatter()
+        }
+
+    }
+
+
+    private fun setUpDataSetForChart(
+        lineChart: LineChart,
+        dataSetList: List<Pair<Date, Double>>,
+        currency: String
+    ) {
+        val entries = dataSetList.map {
+            Entry(it.first.time.toFloat(), it.second.toFloat())
+        }
+
+        val dataSet = LineDataSet(entries, currency)
+        context?.let { dataSet.color = ContextCompat.getColor(it, R.color.colorPrimaryDark) }
+        val lineData = LineData(dataSet)
+        lineChart.data = lineData
+        lineChart.invalidate()
+    }
+
 
 }
 
