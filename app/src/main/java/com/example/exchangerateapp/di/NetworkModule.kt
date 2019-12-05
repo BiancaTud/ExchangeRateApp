@@ -13,7 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-const val API_DATE_FORMAT = "yyyy-MM-dd hh:mm"
+const val API_DATE_FORMAT = "yyyy-MM-dd"
 
 val networkModule = module {
 

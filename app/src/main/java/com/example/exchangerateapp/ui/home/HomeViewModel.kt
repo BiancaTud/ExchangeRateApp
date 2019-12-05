@@ -4,14 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.exchangerateapp.data.RatesRepository
 import com.example.exchangerateapp.data.model.Rate
-import com.example.exchangerateapp.data.model.Rates
 import com.example.exchangerateapp.ui.BaseViewModel
 import com.example.exchangerateapp.util.DebugResponseLogger
-import com.example.exchangerateapp.util.getDateFormat
+import com.example.exchangerateapp.util.getLongDateFormat
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import io.reactivex.disposables.Disposable
 
 
@@ -34,7 +32,7 @@ class HomeViewModel(private val repository: RatesRepository) : BaseViewModel() {
     private fun resumePooling(currentCurrency:String, refreshValue:Long) {
         if (pollingDisposable == null) {
             pollingDisposable =
-                repository.getSearchResults(currentCurrency).subscribeOn(Schedulers.io()).observeOn(
+                repository.getExchangeRates(currentCurrency).subscribeOn(Schedulers.io()).observeOn(
                     AndroidSchedulers.mainThread()
                 ).repeatWhen { observable -> observable.delay(refreshValue, TimeUnit.SECONDS) }
                     .subscribe({ response ->
@@ -63,7 +61,7 @@ class HomeViewModel(private val repository: RatesRepository) : BaseViewModel() {
 
 
     private fun getCurrentTimestamp(): String {
-        return getDateFormat(System.currentTimeMillis())
+        return getLongDateFormat(System.currentTimeMillis())
     }
 
 
